@@ -1,8 +1,11 @@
-﻿ import axios from "axios";
+﻿import axios from "axios";
+
+const baseURL = import.meta.env.VITE_API_URL || "/api";
+
+console.log("🔎 API baseURL =", baseURL);
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api", 
-  // dacă VITE_API_URL nu e setat pe Render, folosește fallback-ul "/api" (merge local)
+  baseURL,
 });
 
 api.interceptors.request.use((config) => {
