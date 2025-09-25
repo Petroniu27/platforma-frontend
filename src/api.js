@@ -1,6 +1,8 @@
 ﻿import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL || "/api";
+// Dacă există VITE_API_URL o folosim, altfel mergem direct pe backend Render
+const baseURL =
+  import.meta.env.VITE_API_URL || "https://platforma-backend.onrender.com/api";
 
 console.log("🔎 API baseURL =", baseURL);
 
