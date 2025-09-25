@@ -1,0 +1,37 @@
+import React, { useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+
+export default function Login() {
+  const { login, loading } = useAuth();
+  const nav = useNavigate();
+  const [email, setEmail] = useState("admin@test.ro");
+  const [password, setPassword] = useState("parola123");
+  const [err, setErr] = useState("");
+
+  const onSubmit = async (e) => {
+    e.preventDefault(); setErr("");
+    try {
+      await login(email, password);
+      nav("/dashboard-profesor");
+    } catch (e) { setErr(e.message || "Login failed"); }
+  };
+
+  return (
+    <div className="content-container" style={{ maxWidth: 420, margin: "40px auto" }}>
+      <h1>Autentificare</h1>
+      {err && <p style={{ color: "crimson" }}>{err}</p>}
+      <form onSubmit={onSubmit}>
+        <label>Email<br />
+          <input value={email} onChange={e=>setEmail(e.target.value)} type="email" required />
+        </label>
+        <br /><br />
+        <label>Parolă<br />
+          <input value={password} onChange={e=>setPassword(e.target.value)} type="password" required />
+        </label>
+        <br /><br />
+        <button disabled={loading} type="submit">{loading ? "Se conectează..." : "Intră"}</button>
+      </form>
+    </div>
+  );
+}

@@ -1,0 +1,66 @@
+.credits-card {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.credits-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi-box {
+  border-radius: 0.75rem;
+  padding: 1rem;
+  color: white;
+  font-weight: bold;
+}
+
+.kpi-label {
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+}
+
+.kpi-box.available { background: #28a745; }  /* verde */
+.kpi-box.used { background: #dc3545; }       /* roșu */
+.kpi-box.included { background: #007bff; }   /* albastru */
+.kpi-box.bought { background: #6f42c1; }     /* mov */
+
+.actions button {
+  background: #0070f3;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.actions button:hover:not(:disabled) {
+  background: #005bb5;
+}
+
+.actions button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  margin-bottom: 1rem;
+}

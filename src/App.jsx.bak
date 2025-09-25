@@ -1,0 +1,75 @@
+import "./style.css";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+
+// layout / nav
+import Navbar from "./components/Navbar";
+import PreviousPageButton from "./components/PreviousPageButton";
+
+// pagini existente
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard"; // dacă îl folosești
+import BacBiologie from "./pages/BacBiologie";
+import AdmitereMedicina from "./pages/AdmitereMedicina";
+import BiologieAdmitere from "./pages/BiologieAdmitere";
+import ChimieAdmitere from "./pages/ChimieAdmitere";
+import BacB1 from "./pages/BacB1";
+
+// fișe
+import Bio901Diversitate from "./pages/bio9-01-diversitate.jsx";
+import Bio902Celula from "./pages/bio9-02-celula.jsx";
+import Bio903Diviziune from "./pages/bio9-03-diviziune.jsx";
+import Bio904Ereditate from "./pages/bio9-04-ereditate.jsx";
+import Bio905Mendel from "./pages/bio9-05-mendel.jsx";
+import Bio1001TesuturiVegetale from "./pages/bio10-01-tesuturi-vegetale.jsx";
+import Bio1002TesuturiAnimale from "./pages/bio10-02-tesuturi-animale.jsx";
+import Bio1003Nutritie from "./pages/bio10-03-nutritie.jsx";
+import Bio1004Respiratia from "./pages/bio10-04-respiratia.jsx";
+
+// nou: dashboard pentru profesori (creează lecții/fișe/video)
+import DashboardProfesor from "./pages/DashboardProfesor";
+
+function App() {
+  return (
+    <>
+      <Navbar />
+      <PreviousPageButton />
+
+      <Routes>
+        {/* public */}
+        <Route path="/" element={<Home />} />
+        <Route path="/bac/biologie" element={<BacBiologie />} />
+        <Route path="/admitere" element={<AdmitereMedicina />} />
+        <Route path="/admitere/biologie" element={<BiologieAdmitere />} />
+        <Route path="/admitere/chimie" element={<ChimieAdmitere />} />
+        <Route path="/bac/b1" element={<BacB1 />} />
+
+        {/* auth */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* dashboard generic (dacă îl folosești deja) */}
+        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* dashboard profesor (folosește token din AuthContext) */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard-profesor" element={<DashboardProfesor />} />
+
+        {/* fișe directe */}
+        <Route path="/bio9-01-diversitate" element={<Bio901Diversitate />} />
+        <Route path="/bio9-02-celula" element={<Bio902Celula />} />
+        <Route path="/bio9-03-diviziune" element={<Bio903Diviziune />} />
+        <Route path="/bio9-04-ereditate" element={<Bio904Ereditate />} />
+        <Route path="/bio9-05-mendel" element={<Bio905Mendel />} />
+        <Route path="/bio10-01-tesuturi-vegetale" element={<Bio1001TesuturiVegetale />} />
+        <Route path="/bio10-02-tesuturi-animale" element={<Bio1002TesuturiAnimale />} />
+        <Route path="/bio10-03-nutritie" element={<Bio1003Nutritie />} />
+        <Route path="/bio10-04-respiratia" element={<Bio1004Respiratia />} />
+      </Routes>
+    </>
+  );
+}
+
+export default App;

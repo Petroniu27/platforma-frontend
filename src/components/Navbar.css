@@ -1,0 +1,85 @@
+.navbar {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  background: linear-gradient(90deg, #0fffc1, #00bcd4);
+  padding: 15px 0;
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+  border-radius: 12px;
+  margin-bottom: 30px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nav-link {
+  text-decoration: none;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 18px;
+  color: #00333d;
+  border: 2px solid transparent;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px rgba(0, 255, 220, 0.6);
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 0 12px #00fff0, 0 0 8px #00fff0 inset;
+  color: #000;
+  border-color: #00fff0;
+}
+
+.nav-link.active {
+  background: #00fff0;
+  color: #002222;
+  box-shadow: 0 0 20px #00fff0;
+  border-color: #00fff0;
+}
+
+/* 🔹 Container general pentru burger + nav */
+.navbar {
+  position: relative;
+  flex-wrap: wrap;
+}
+
+/* Buton burger (ascuns pe desktop) */
+.burger {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  color: #00333d;
+  cursor: pointer;
+  display: none; /* doar pe mobil */
+}
+
+/* Container linkuri pentru mobil */
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    justify-content: space-between; /* logo + burger */
+    padding: 10px 15px;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .burger {
+    display: block;
+  }
+}
+

@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "testuser",
+      "email": "test@meditatii.ro",
+      "password": "parola123"
+    },
+    {
+      "id": "e3b5",
+      "username": "Tata urs",
+      "email": "tataurs@yahoo.com",
+      "password": "1234"
+    },
+    {
+      "id": "1c64",
+      "username": "anastasia",
+      "email": "anastasiagrecu@mama.com",
+      "password": "1234"
+    },
+    {
+      "id": "15c3",
+      "username": "teo",
+      "email": "teodoragrecu2004@gmail.com",
+      "password": "4321"
+    },
+    {
+      "id": "879a",
+      "username": "florina",
+      "email": "florina@brontozaur.com",
+      "password": "zaq12wsx"
+    }
+  ]
+}

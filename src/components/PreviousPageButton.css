@@ -1,0 +1,19 @@
+.previous-page-button {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  background-color: #007BFF;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 1000;
+  transition: background-color 0.3s ease;
+}
+
+.previous-page-button:hover {
+  background-color: #0056b3;
+}
