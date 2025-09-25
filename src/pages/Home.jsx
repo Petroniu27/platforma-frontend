@@ -2,8 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../style.css';
 import logo from '../Assets/logo-academedica.png';
-import salLogo from '../Assets/anpc-sal.png';
-import solLogo from '../Assets/anpc-sol.png';
+import salLogo from '../Assets/ANPC-SAL.png';
+import solLogo from '../Assets/ANPM-SOL.png';
 
 export default function Home() {
   return (
