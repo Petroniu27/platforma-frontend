@@ -5,24 +5,22 @@ import { api } from "../api";
 const AuthContext = createContext(null);
 export const useAuth = () => useContext(AuthContext);
 
-// 🔐 API login call
+// 🔐 API login call (folosim api.js, nu fetch direct) + păstrăm mesajele de eroare
 async function loginApi(email, password) {
-  const res = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-
-  if (!res.ok) {
+  try {
+    const res = await api.post("/auth/login", { email, password });
+    return res.data; // { token, user }
+  } catch (err) {
     let msg = "Autentificare eșuată.";
     try {
-      const data = await res.json();
-      msg = data?.error || msg;
+      msg =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        msg;
     } catch {}
     throw new Error(msg);
   }
-
-  return res.json(); // { token, user }
 }
 
 export default function AuthProvider({ children }) {
@@ -73,7 +71,7 @@ export default function AuthProvider({ children }) {
     if (!token) return null;
     try {
       const res = await api.get("/auth/me");
-      setUser(res.data); // direct obiect user
+      setUser(res.data); // direct obiect user (păstrat ca la tine)
       localStorage.setItem("user", JSON.stringify(res.data));
       return res.data;
     } catch (err) {
