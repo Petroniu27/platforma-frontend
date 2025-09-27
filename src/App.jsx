@@ -1,6 +1,7 @@
 import "./style.css";
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, useSearchParams } from "react-router-dom"; // 🆕
+import { useAuth } from "./context/AuthContext"; // 🆕
 
 // layout / nav
 import Navbar from "./components/Navbar";
@@ -45,9 +46,18 @@ import AscultariProfesor from "./pages/AscultariProfesor";
 // pagini noi
 import MedicinaAdmitereInfo from "./pages/MedicinaAdmitereInfo";
 import BacInfo from "./pages/BacInfo";
-import AdmitereLectii from "./pages/AdmitereLectii";   // 🆕 hub lecții
+import AdmitereLectii from "./pages/AdmitereLectii"; // 🆕 hub lecții
 
 function App() {
+  const [searchParams] = useSearchParams(); // 🆕
+  const { refreshUser } = useAuth();        // 🆕
+
+  useEffect(() => {
+    if (searchParams.get("status") === "success") {
+      refreshUser(); // 🧠 actualizează userul după plată
+    }
+  }, [searchParams]);
+
   return (
     <>
       <Navbar />
@@ -57,7 +67,7 @@ function App() {
         {/* Public */}
         <Route path="/" element={<Home />} />
         <Route path="/bac/biologie" element={<BacBiologie />} />
-        <Route path="/admitere" element={<AdmitereLectii />} />   {/* 🆕 hub lecții */}
+        <Route path="/admitere" element={<AdmitereLectii />} />
         <Route path="/admitere/biologie" element={<BiologieAdmitere />} />
         <Route path="/admitere/chimie" element={<ChimieAdmitere />} />
         <Route path="/bac/b1" element={<BacB1 />} />
@@ -93,7 +103,7 @@ function App() {
         <Route path="/bio10-04-respiratia" element={<Bio1004Respiratia />} />
 
         {/* Diverse */}
-        <Route path="/abonamente" element={<Abonament />} />   {/* 🔥 plural */}
+        <Route path="/abonamente" element={<Abonament />} />
         <Route path="/evaluari" element={<Evaluation />} />
 
         {/* Ascultări */}
