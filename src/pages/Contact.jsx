@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../style.css';
+import { api } from '../api';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
@@ -17,23 +18,11 @@ export default function Contact() {
     }
 
     try {
-      const res = await fetch('http://localhost:5001/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
+      const res = await api.post('/contact', form);
+      const data = res.data;
 
-      const data = await res.json();
-      console.log('📬 Răspuns server:', data);
-
-      if (res.ok) {
-        alert('Mesaj trimis cu succes! Îți mulțumim!');
-        setForm({ name: '', email: '', message: '' });
-      } else {
-        alert(`Eroare: ${data.error || 'Mesajul nu a putut fi trimis'}`);
-      }
+      alert('Mesaj trimis cu succes! Îți mulțumim!');
+      setForm({ name: '', email: '', message: '' });
     } catch (err) {
       console.error('❌ Eroare la trimiterea mesajului:', err);
       alert('A apărut o eroare la trimiterea mesajului.');
