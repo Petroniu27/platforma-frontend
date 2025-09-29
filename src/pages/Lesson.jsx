@@ -1,8 +1,10 @@
 ﻿import React, { useEffect, useState, useRef } from "react";
-import Player from "@vimeo/player"; // npm install @vimeo/player
-import { api } from "../api"; // ✅ axios configurat
+import { useParams } from "react-router-dom"; // 🆕 luăm slug din URL
+import Player from "@vimeo/player";
+import { api } from "../api";
 
-export default function Lesson({ slug = "bio-b1-celula-01" }) {
+export default function Lesson() {
+  const { slug } = useParams(); // 🆕 slug din URL
   const [video, setVideo] = useState(null);
   const [progress, setProgress] = useState({ lastPositionSec: 0, completed: false });
   const [extraVideos, setExtraVideos] = useState([]);
@@ -11,6 +13,8 @@ export default function Lesson({ slug = "bio-b1-celula-01" }) {
 
   // 🔎 Fetch lecția și restul clipurilor din modul
   useEffect(() => {
+    if (!slug) return;
+
     (async () => {
       try {
         const v = await api.get(`/videos/${slug}`).then((r) => r.data);
