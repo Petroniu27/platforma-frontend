@@ -1,11 +1,9 @@
 ﻿// src/api.js
 import axios from "axios";
 
-// 🔍 Folosim variabila injectată de vite.config.js
+// ✅ VITE injectează doar import.meta.env.VITE_*
 const baseURL =
-  typeof __VITE_API_URL__ !== "undefined"
-    ? __VITE_API_URL__
-    : "https://platforma-backend.onrender.com/api";
+  import.meta.env.VITE_API_URL || "https://platforma-backend.onrender.com/api";
 
 console.log("🔎 API baseURL =", baseURL);
 

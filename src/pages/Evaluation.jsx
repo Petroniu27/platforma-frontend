@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { api } from "../api";
 
 export default function Evaluation() {
   const { user } = useAuth();
@@ -17,12 +18,9 @@ export default function Evaluation() {
   const [selectedChapter, setSelectedChapter] = useState(null);
   const [error, setError] = useState("");
 
-  // ✅ verifică abonamente atât pe coduri noi (bio1..adm2), cât și legacy
   const abonamentValid =
     Array.isArray(user?.subscriptions) &&
-    user.subscriptions.some((sub) =>
-      /(bio|chim|adm)/i.test(String(sub || ""))
-    );
+    user.subscriptions.some((sub) => /(bio|chim|adm)/i.test(String(sub || "")));
 
   useEffect(() => {
     if (!abonamentValid) {
@@ -32,22 +30,9 @@ export default function Evaluation() {
 
     const fetchData = async () => {
       try {
-        const r = await fetch("/api/evaluations", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const r = await api.get("/evaluations");
+        const json = r.data;
 
-        if (!r.ok) {
-          const errJson = await r.json().catch(() => ({}));
-          setError(errJson.error || `Eroare ${r.status}`);
-          setData([]);
-          return;
-        }
-
-        const json = await r.json();
-
-        // ✅ acceptă și răspuns tip [{…}] și tip { evaluations: […] }
         const arr = Array.isArray(json)
           ? json
           : Array.isArray(json?.evaluations)
