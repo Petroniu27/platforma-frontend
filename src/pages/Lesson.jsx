@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState, useRef } from "react";
 import Player from "@vimeo/player"; // npm install @vimeo/player
+import { api } from "../api"; // ✅ folosim instanța axios configurată
 
 export default function Lesson({ slug = "bio-b1-celula-01" }) {
   const [video, setVideo] = useState(null);
@@ -7,20 +8,17 @@ export default function Lesson({ slug = "bio-b1-celula-01" }) {
   const iframeRef = useRef(null);
   const playerRef = useRef(null);
 
-  // Fetch lecția și progresul
+  // 🔎 Fetch lecția și progresul
   useEffect(() => {
     (async () => {
       try {
-        const v = await fetch(`/api/videos/${slug}`).then((r) => {
-          if (!r.ok) throw new Error("Video not found");
-          return r.json();
-        });
+        const v = await api.get(`/videos/${slug}`).then((r) => r.data);
         setVideo(v);
 
-        const p = await fetch(`/api/videos/${slug}/progress`).then((r) => {
-          if (!r.ok) return { lastPositionSec: 0, completed: false };
-          return r.json();
-        });
+        const p = await api
+          .get(`/videos/${slug}/progress`)
+          .then((r) => r.data)
+          .catch(() => ({ lastPositionSec: 0, completed: false }));
         setProgress(p);
       } catch (err) {
         console.error("Eroare la încărcarea lecției:", err);
@@ -28,7 +26,7 @@ export default function Lesson({ slug = "bio-b1-celula-01" }) {
     })();
   }, [slug]);
 
-  // Inițializează Vimeo Player și salvează progresul
+  // ▶️ Inițializează Vimeo Player și salvează progresul
   useEffect(() => {
     if (iframeRef.current && !playerRef.current) {
       const player = new Player(iframeRef.current);
@@ -39,10 +37,8 @@ export default function Lesson({ slug = "bio-b1-celula-01" }) {
           const newPos = Math.floor(data.seconds);
           setProgress((p) => ({ ...p, lastPositionSec: newPos }));
           try {
-            await fetch(`/api/videos/${slug}/progress`, {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ lastPositionSec: newPos }),
+            await api.patch(`/videos/${slug}/progress`, {
+              lastPositionSec: newPos,
             });
           } catch (err) {
             console.error("Eroare la salvarea progresului:", err);
