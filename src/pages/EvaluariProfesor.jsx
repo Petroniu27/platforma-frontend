@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { api } from "../api";
 import { chaptersBySubscription } from "../data/chaptersBySubscription";
 
 export default function EvaluariProfesor() {
@@ -16,23 +17,13 @@ export default function EvaluariProfesor() {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const r = await fetch("/api/evaluations/students-with-admitere", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const r = await api.get("/evaluations/students-with-admitere");
 
-        if (!r.ok) {
-          throw new Error(`Serverul a răspuns cu ${r.status}`);
-        }
-
-        const data = await r.json();
-
-        if (!Array.isArray(data)) {
+        if (!Array.isArray(r.data)) {
           throw new Error("Răspuns invalid de la server (nu e listă)");
         }
 
-        setStudents(data);
+        setStudents(r.data);
       } catch (err) {
         console.error("Eroare la încărcarea elevilor:", err);
         setMessage("❌ Nu s-au putut încărca elevii eligibili.");
@@ -64,16 +55,11 @@ export default function EvaluariProfesor() {
     setMessage("");
 
     try {
-      const r = await fetch("/api/evaluations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(form),
-      });
+      const r = await api.post("/evaluations", form);
 
-      if (!r.ok) throw new Error("Eroare la trimitere");
+      if (!r || !r.data) {
+        throw new Error("Eroare la trimitere");
+      }
 
       setMessage("✅ Evaluare adăugată cu succes!");
       setForm({ studentId: "", chapter: "", score: "", date: "" });
