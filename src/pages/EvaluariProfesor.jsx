@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { chaptersBySubscription } from "../data/chaptersBySubscription";
+import { subjects } from "../subjects";
 
 export default function EvaluariProfesor() {
   const [form, setForm] = useState({
     studentId: "",
-    chapter: "",
+    subject: "",
+    chapterCode: "",
     score: "",
     date: "",
   });
   const [students, setStudents] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [capitole, setCapitole] = useState([]);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const res = await fetch("https://platforma-backend.onrender.com/api/evaluations/students-with-admitere", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const res = await fetch(
+          "https://platforma-backend.onrender.com/api/evaluations/students-with-admitere",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         if (!res.ok) {
           throw new Error(`Serverul a răspuns cu ${res.status}`);
@@ -28,7 +31,6 @@ export default function EvaluariProfesor() {
 
         const data = await res.json();
 
-        // 🟢 aici era problema: răspunsul are data.students, nu direct un array
         if (!Array.isArray(data.students)) {
           throw new Error("Răspuns invalid de la server (nu e listă de elevi)");
         }
@@ -49,14 +51,8 @@ export default function EvaluariProfesor() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
 
-    if (name === "studentId") {
-      const elev = students.find((s) => s._id === value);
-      if (elev) {
-        const abonament = elev.subscription?.toLowerCase();
-        const lista = chaptersBySubscription[abonament] || [];
-        setCapitole(lista);
-        setForm((prev) => ({ ...prev, chapter: "" }));
-      }
+    if (name === "subject") {
+      setForm((prev) => ({ ...prev, chapterCode: "" }));
     }
   };
 
@@ -65,22 +61,30 @@ export default function EvaluariProfesor() {
     setMessage("");
 
     try {
-      const res = await fetch("https://platforma-backend.onrender.com/api/evaluations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(form),
-      });
+      const res = await fetch(
+        "https://platforma-backend.onrender.com/api/evaluations",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
       if (!res.ok) throw new Error("Eroare la trimitere");
 
-      await res.json(); // citim răspunsul dar nu ne interesează conținutul
+      await res.json();
 
       setMessage("✅ Evaluare adăugată cu succes!");
-      setForm({ studentId: "", chapter: "", score: "", date: "" });
-      setCapitole([]);
+      setForm({
+        studentId: "",
+        subject: "",
+        chapterCode: "",
+        score: "",
+        date: "",
+      });
     } catch (err) {
       console.error(err);
       setMessage("❌ Eroare la trimiterea evaluării.");
@@ -96,6 +100,7 @@ export default function EvaluariProfesor() {
       ) : (
         <>
           <form onSubmit={handleSubmit}>
+            {/* Select elev */}
             <select
               name="studentId"
               value={form.studentId}
@@ -110,21 +115,39 @@ export default function EvaluariProfesor() {
               ))}
             </select>
 
+            {/* Select materie */}
             <select
-              name="chapter"
-              value={form.chapter}
+              name="subject"
+              value={form.subject}
               onChange={handleChange}
               required
-              disabled={!capitole.length}
             >
-              <option value="">Selectează capitolul</option>
-              {capitole.map((ch, idx) => (
-                <option key={idx} value={ch}>
-                  {ch}
+              <option value="">Selectează materia</option>
+              {Object.entries(subjects).map(([code, subj]) => (
+                <option key={code} value={code}>
+                  {subj.name}
                 </option>
               ))}
             </select>
 
+            {/* Select capitol */}
+            {form.subject && (
+              <select
+                name="chapterCode"
+                value={form.chapterCode}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selectează capitolul</option>
+                {subjects[form.subject].chapters.map((ch) => (
+                  <option key={ch.code} value={ch.code}>
+                    {ch.label}
+                  </option>
+                ))}
+              </select>
+            )}
+
+            {/* Notă */}
             <input
               type="number"
               name="score"
@@ -136,6 +159,7 @@ export default function EvaluariProfesor() {
               required
             />
 
+            {/* Data */}
             <input
               type="date"
               name="date"
