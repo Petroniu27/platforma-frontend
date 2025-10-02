@@ -28,11 +28,12 @@ export default function EvaluariProfesor() {
 
         const data = await res.json();
 
-        if (!Array.isArray(data)) {
-          throw new Error("Răspuns invalid de la server (nu e listă)");
+        // 🟢 aici era problema: răspunsul are data.students, nu direct un array
+        if (!Array.isArray(data.students)) {
+          throw new Error("Răspuns invalid de la server (nu e listă de elevi)");
         }
 
-        setStudents(data);
+        setStudents(data.students);
       } catch (err) {
         console.error("Eroare la încărcarea elevilor:", err);
         setMessage("❌ Nu s-au putut încărca elevii eligibili.");
@@ -75,7 +76,7 @@ export default function EvaluariProfesor() {
 
       if (!res.ok) throw new Error("Eroare la trimitere");
 
-      const data = await res.json();
+      await res.json(); // citim răspunsul dar nu ne interesează conținutul
 
       setMessage("✅ Evaluare adăugată cu succes!");
       setForm({ studentId: "", chapter: "", score: "", date: "" });
