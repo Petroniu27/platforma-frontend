@@ -22,7 +22,9 @@ export default function Evaluation() {
 
   const abonamentValid =
     Array.isArray(user?.subscriptions) &&
-    user.subscriptions.some((sub) => /(bio|chim|adm|romana)/i.test(String(sub || "")));
+    user.subscriptions.some((sub) =>
+      /(bio|chim|adm|romana)/i.test(sub?.plan || "")
+    );
 
   useEffect(() => {
     if (!abonamentValid) {
@@ -66,7 +68,7 @@ export default function Evaluation() {
 
   // Filtru materii accesibile elevului
   const allowedSubjects = Object.entries(subjects).filter(([code]) =>
-    user?.subscriptions?.includes(code)
+    user?.subscriptions?.some((sub) => sub.plan === code)
   );
 
   const filteredEvals = data.filter(
@@ -138,7 +140,9 @@ export default function Evaluation() {
                 <BarChart data={filteredEvals}>
                   <XAxis
                     dataKey="date"
-                    tickFormatter={(d) => new Date(d).toLocaleDateString()}
+                    tickFormatter={(d) =>
+                      new Date(d).toLocaleDateString()
+                    }
                   />
                   <YAxis domain={[0, 10]} />
                   <Tooltip />

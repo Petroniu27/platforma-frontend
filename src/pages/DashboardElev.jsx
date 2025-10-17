@@ -13,7 +13,6 @@ export default function DashboardElev() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // === mapare cod -> nume frumos pentru abonament ===
   const SUB_NAMES = {
     bio1: "BioStart",
     bio2: "BioMaster",
@@ -26,18 +25,17 @@ export default function DashboardElev() {
     admitere: "Admitere (legacy)",
   };
 
-  // ✅ verificare abonament
   const isValidSubscription = () => {
     if (!user) return false;
     if (user.role === "admin" || user.role === "prof") return true;
     if (!user.subscriptions || !user.subscriptions.length) return false;
 
-    return user.subscriptions.some((sub) =>
-      sub.toLowerCase().match(/chim|bio|adm/)
-    );
+    return user.subscriptions.some((sub) => {
+      const plan = typeof sub === "string" ? sub : sub.plan;
+      return plan.toLowerCase().match(/chim|bio|adm/);
+    });
   };
 
-  // 🔁 mesaj pentru lipsă abonament
   const renderNoSubscription = () => (
     <div className="actions">
       <p>Nu ai niciun abonament activ.</p>
@@ -45,7 +43,6 @@ export default function DashboardElev() {
     </div>
   );
 
-  // === ascultarea viitoare ===
   const [nextAscultare, setNextAscultare] = useState(null);
 
   useEffect(() => {
@@ -54,10 +51,8 @@ export default function DashboardElev() {
     const fetchAscultari = async () => {
       try {
         const res = await api.get("/ascultari/bookings/me");
- // ruta backend pentru sesiunile proprii
         const ascultari = res.data || [];
 
-        // sortăm după start
         const upcoming = ascultari
           .filter((a) => a.status === "booked")
           .sort((a, b) => new Date(a.start) - new Date(b.start));
@@ -98,42 +93,16 @@ export default function DashboardElev() {
         )}
 
         <ul>
-          <li
-            className={activeTab === "home" ? "active" : ""}
-            onClick={() => setActiveTab("home")}
-          >
-            Acasă
-          </li>
-          <li
-            className={activeTab === "courses" ? "active" : ""}
-            onClick={() => setActiveTab("courses")}
-          >
-            Cursurile mele
-          </li>
-          <li
-            className={activeTab === "evaluari" ? "active" : ""}
-            onClick={() => setActiveTab("evaluari")}
-          >
-            Evaluările mele
-          </li>
-          <li
-            className={activeTab === "ascultari" ? "active" : ""}
-            onClick={() => setActiveTab("ascultari")}
-          >
-            Ascultări
-          </li>
-          <li
-            className={activeTab === "settings" ? "active" : ""}
-            onClick={() => setActiveTab("settings")}
-          >
-            Setări
-          </li>
+          <li className={activeTab === "home" ? "active" : ""} onClick={() => setActiveTab("home")}>Acasă</li>
+          <li className={activeTab === "courses" ? "active" : ""} onClick={() => setActiveTab("courses")}>Cursurile mele</li>
+          <li className={activeTab === "evaluari" ? "active" : ""} onClick={() => setActiveTab("evaluari")}>Evaluările mele</li>
+          <li className={activeTab === "ascultari" ? "active" : ""} onClick={() => setActiveTab("ascultari")}>Ascultări</li>
+          <li className={activeTab === "settings" ? "active" : ""} onClick={() => setActiveTab("settings")}>Setări</li>
           <li onClick={logout}>Logout</li>
         </ul>
       </aside>
 
       <main className="dashboard-content">
-        {/* === HOME === */}
         {activeTab === "home" && (
           <>
             <h1>Bine ai venit, {user?.name}!</h1>
@@ -143,9 +112,10 @@ export default function DashboardElev() {
                 <h3>📚 Abonamente active</h3>
                 {user?.subscriptions?.length ? (
                   <ul>
-                    {user.subscriptions.map((sub, idx) => (
-                      <li key={idx}>{SUB_NAMES[sub] || sub}</li>
-                    ))}
+                    {user.subscriptions.map((sub, idx) => {
+                      const plan = typeof sub === "string" ? sub : sub.plan;
+                      return <li key={idx}>{SUB_NAMES[plan] || plan}</li>;
+                    })}
                   </ul>
                 ) : (
                   <p>Nu ai abonamente active</p>
@@ -161,7 +131,7 @@ export default function DashboardElev() {
                 <h3>🎤 Ascultări</h3>
                 {nextAscultare ? (
                   <p>
-                    Următoarea ascultare programată:{" "}
+                    Următoarea ascultare programată: {" "}
                     <strong>
                       {new Date(nextAscultare.start).toLocaleString("ro-RO", {
                         weekday: "long",
@@ -178,27 +148,19 @@ export default function DashboardElev() {
               </div>
             </div>
 
-            {/* 🔥 Card rapid cu creditele */}
             <div className="credits-overview">
               <CreditsCard />
             </div>
 
             <div className="quick-actions">
               <h3>Acțiuni rapide</h3>
-              <button onClick={() => setActiveTab("courses")}>
-                Vezi cursurile
-              </button>
-              <button onClick={() => setActiveTab("evaluari")}>
-                Evaluările mele
-              </button>
-              <button onClick={() => setActiveTab("ascultari")}>
-                Programează ascultare
-              </button>
+              <button onClick={() => setActiveTab("courses")}>Vezi cursurile</button>
+              <button onClick={() => setActiveTab("evaluari")}>Evaluările mele</button>
+              <button onClick={() => setActiveTab("ascultari")}>Programează ascultare</button>
             </div>
           </>
         )}
 
-        {/* === CURSURI === */}
         {activeTab === "courses" && (
           <>
             <h2>Cursurile mele</h2>
@@ -206,18 +168,14 @@ export default function DashboardElev() {
             {isValidSubscription() ? (
               <>
                 <ul className="course-list">
-                  {user.subscriptions?.map((sub, idx) => (
-                    <li key={idx}>{SUB_NAMES[sub] || sub}</li>
-                  ))}
+                  {user.subscriptions?.map((sub, idx) => {
+                    const plan = typeof sub === "string" ? sub : sub.plan;
+                    return <li key={idx}>{SUB_NAMES[plan] || plan}</li>;
+                  })}
                 </ul>
                 <div className="actions">
-                  <p>
-                    📈 Upgradează-ți abonamentul pentru mai multe cursuri și
-                    avantaje!
-                  </p>
-                  <button onClick={() => navigate("/abonamente")}>
-                    Upgradează abonamentul
-                  </button>
+                  <p>📈 Upgradează-ți abonamentul pentru mai multe cursuri și avantaje!</p>
+                  <button onClick={() => navigate("/abonamente")}>Upgradează abonamentul</button>
                 </div>
               </>
             ) : (
@@ -235,14 +193,11 @@ export default function DashboardElev() {
                 <br />– simulări de examen
               </p>
               <p>👉 Spune-ne și cât ai fi dispus să plătești!</p>
-              <button onClick={() => navigate("/contact")}>
-                Trimite sugestia ta
-              </button>
+              <button onClick={() => navigate("/contact")}>Trimite sugestia ta</button>
             </div>
           </>
         )}
 
-        {/* === EVALUARI === */}
         {activeTab === "evaluari" && (
           <>
             <h2>Evaluările mele</h2>
@@ -250,7 +205,6 @@ export default function DashboardElev() {
           </>
         )}
 
-        {/* === ASCULTARI === */}
         {activeTab === "ascultari" && (
           <>
             <h2>Ascultări</h2>
@@ -258,7 +212,6 @@ export default function DashboardElev() {
           </>
         )}
 
-        {/* === SETARI === */}
         {activeTab === "settings" && (
           <>
             <h2>Setări cont</h2>
